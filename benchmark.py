@@ -8,26 +8,10 @@ from torch import autocast
 from diffusers import StableDiffusionPipeline
 from mlperf_logging.mllog import mllogger
 from mlperf_logging import mllog
+import argparse
 
 def use_auth_token():
     return "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"
-
-SERVER_NAME = "g4dn.2xlarge"
-if not os.path.exists(SERVER_NAME + '/log'):
-    os.makedirs(SERVER_NAME + '/log')
-mllog.config(filename=SERVER_NAME + '/log/mlperf_log.txt')
-
-logging.basicConfig(filename=SERVER_NAME + '/image_generation.log', level=logging.INFO)
-
-# Write the PID to a file in /tmp
-with open('/tmp/stable_diffusion.pid', 'w') as f:
-    f.write(str(os.getpid()))
-
-# Hosting cost per hour in dollars
-ONDEMAND_HOSTING_COST_PER_HOUR = 0.7520
-RESERVED_ONE_YEAR_HOSTING_COST_PER_HOUR = 0.4740
-RESERVED_THREE_YEAR_HOSTING_COST_PER_HOUR = 0.3250
-SPOT_HOSTING_COST_PER_HOUR = 0.3201
 
 def calculate_cost(duration_seconds, cost):
     return (duration_seconds / 3600) * cost
@@ -59,7 +43,7 @@ def log_gpu_metrics():
         logging.error(f"Error collecting GPU metrics: {e}")
         return None
 
-def log_monitoring_info(start_time, start_gpu_metrics, count, image_size):
+def log_monitoring_info(start_time, start_gpu_metrics, count, image_size, costs):
     end_time = time.time()
 
     gpu_metrics = log_gpu_metrics()
@@ -68,10 +52,10 @@ def log_monitoring_info(start_time, start_gpu_metrics, count, image_size):
 
     duration = end_time - start_time
 
-    ondemand_cost = calculate_cost(duration, ONDEMAND_HOSTING_COST_PER_HOUR)
-    reserved_one_year_cost = calculate_cost(duration, RESERVED_ONE_YEAR_HOSTING_COST_PER_HOUR)
-    reserved_three_year_cost = calculate_cost(duration, RESERVED_THREE_YEAR_HOSTING_COST_PER_HOUR)
-    spot_cost = calculate_cost(duration, SPOT_HOSTING_COST_PER_HOUR)
+    ondemand_cost = calculate_cost(duration, costs["ondemand"])
+    reserved_one_year_cost = calculate_cost(duration, costs["reserved_one_year"])
+    reserved_three_year_cost = calculate_cost(duration, costs["reserved_three_year"])
+    spot_cost = calculate_cost(duration, costs["spot"])
 
     metrics = {
         "duration": duration,
@@ -95,9 +79,9 @@ def log_monitoring_info(start_time, start_gpu_metrics, count, image_size):
     print(f"Spot instance Cost of image generation: ${spot_cost:.6f}")
     print(f"Image size: {image_size}")
 
-def text2Image(model, prompt, count):
-    if not os.path.exists(SERVER_NAME):
-        os.makedirs(SERVER_NAME)
+def text2Image(model, prompt, count, server_name, costs):
+    if not os.path.exists(server_name):
+        os.makedirs(server_name)
     
     mllogger.start(key='model_loading', value={"model": model})
     start_model_loading_time = time.time()
@@ -134,11 +118,11 @@ def text2Image(model, prompt, count):
         print(f"Error generating image: {e}")
         return
     
-    image_path = os.path.join(SERVER_NAME, f"{count}.png")
+    image_path = os.path.join(server_name, f"{count}.png")
     image.save(image_path)
     
     # Log monitoring info after image generation
-    log_monitoring_info(start_time, start_gpu_metrics, count, image_size)
+    log_monitoring_info(start_time, start_gpu_metrics, count, image_size, costs)
     
     mllogger.end(key='inference_latency', value={"duration": inference_duration})
     logging.info(f"Inference latency for image {count}: {inference_duration:.2f} seconds.")
@@ -148,7 +132,35 @@ def text2Image(model, prompt, count):
     gc.collect()
 
 def main():
-    model = "CompVis/stable-diffusion-v1-4"
+    parser = argparse.ArgumentParser(description='Stable Diffusion Benchmarking')
+    parser.add_argument('--server_name', type=str, required=True, help='Name of the server')
+    parser.add_argument('--model_name', type=str, required=True, help='Name of the model')
+    parser.add_argument('--ondemand_cost', type=float, required=True, help='On-demand hosting cost per hour')
+    parser.add_argument('--reserved_one_year_cost', type=float, required=True, help='Reserved one-year hosting cost per hour')
+    parser.add_argument('--reserved_three_year_cost', type=float, required=True, help='Reserved three-year hosting cost per hour')
+    parser.add_argument('--spot_cost', type=float, required=True, help='Spot hosting cost per hour')
+
+    args = parser.parse_args()
+
+    server_name = args.server_name
+    model_name = args.model_name
+    costs = {
+        "ondemand": args.ondemand_cost,
+        "reserved_one_year": args.reserved_one_year_cost,
+        "reserved_three_year": args.reserved_three_year_cost,
+        "spot": args.spot_cost
+    }
+
+    if not os.path.exists(server_name + '/log'):
+        os.makedirs(server_name + '/log')
+    mllog.config(filename=server_name + '/log/mlperf_log.txt')
+
+    logging.basicConfig(filename=server_name + '/image_generation.log', level=logging.INFO)
+
+    # Write the PID to a file in /tmp
+    with open('/tmp/stable_diffusion.pid', 'w') as f:
+        f.write(str(os.getpid()))
+
     prompts = [
         "A beautiful landscape with mountains and rivers",
         "A futuristic cityscape at night",
@@ -185,13 +197,13 @@ def main():
     for i, prompt in enumerate(prompts):
         print(f"Generating image {i+1}/{len(prompts)} for prompt: '{prompt}'")
         try:
-            text2Image(model, prompt, i+1)
+            text2Image(model_name, prompt, i+1, server_name, costs)
             print(f"Image {i+1} saved.")
         except RuntimeError as e:
             print(f"Failed to generate image {i+1}: {e}")
             torch.cuda.empty_cache()
             gc.collect()
-    
+
 if __name__ == "__main__":
     os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
     main()
