@@ -1,0 +1,10 @@
+torch
+diffusers
+transformers
+huggingface_hub
+accelerate
+psutil
+nvidia-ml-py3
+git+https://github.com/mlperf/logging.git@4.0.0-rc2
+pynvml
+boto3
