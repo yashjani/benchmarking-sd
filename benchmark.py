@@ -2,8 +2,8 @@ import os
 import time
 import torch
 import gc
-import psutil
-import pynvml
+import subprocess
+import logging
 from torch import autocast
 from diffusers import StableDiffusionPipeline
 from mlperf_logging.mllog import mllogger
@@ -17,56 +17,56 @@ if not os.path.exists(SERVER_NAME + '/log'):
     os.makedirs(SERVER_NAME + '/log')
 mllog.config(filename=SERVER_NAME + '/log/mlperf_log.txt')
 
+logging.basicConfig(filename=SERVER_NAME + '/image_generation.log', level=logging.INFO)
+
+# Write the PID to a file in /tmp
+with open('/tmp/stable_diffusion.pid', 'w') as f:
+    f.write(str(os.getpid()))
+
 # Hosting cost per hour in dollars
 ONDEMAND_HOSTING_COST_PER_HOUR = 0.7520
 RESERVED_ONE_YEAR_HOSTING_COST_PER_HOUR = 0.4740
 RESERVED_THREE_YEAR_HOSTING_COST_PER_HOUR = 0.3250
 SPOT_HOSTING_COST_PER_HOUR = 0.3201
 
-def init_gpu_monitoring():
-    pynvml.nvmlInit()
-    device_handles = []
-    device_count = pynvml.nvmlDeviceGetCount()
-    for i in range(device_count):
-        handle = pynvml.nvmlDeviceGetHandleByIndex(i)
-        device_handles.append(handle)
-        print(f"Device {i}: {pynvml.nvmlDeviceGetName(handle)}")
-    return device_handles
-
 def calculate_cost(duration_seconds, cost):
     return (duration_seconds / 3600) * cost
 
-def log_monitoring_info(start_time, start_cpu_usage, start_memory_usage, start_gpu_usage, start_gpu_temp, start_disk_io, start_net_io, device_handles, count, image_size):
+def log_gpu_metrics():
+    try:
+        gpu_output = subprocess.check_output(
+            ['nvidia-smi', '--query-gpu=utilization.gpu,utilization.memory,memory.total,memory.used,memory.free,temperature.gpu,power.draw', '--format=csv,noheader,nounits'],
+            stderr=subprocess.STDOUT
+        ).decode('utf-8').strip().split('\n')
+
+        gpu_metrics = []
+        for gpu in gpu_output:
+            metrics = [x.strip() for x in gpu.split(',')]
+            gpu_metrics.append({
+                'gpu_utilization': metrics[0],
+                'gpu_memory_utilization': metrics[1],
+                'gpu_memory_total': metrics[2],
+                'gpu_memory_used': metrics[3],
+                'gpu_memory_free': metrics[4],
+                'gpu_temperature': metrics[5],  # GPU temperature
+                'gpu_power_draw': metrics[6]  # Power draw in watts
+            })
+        return gpu_metrics
+    except subprocess.CalledProcessError as e:
+        logging.error(f"Error collecting GPU metrics: {e.output.decode('utf-8')}")
+        return None
+    except Exception as e:
+        logging.error(f"Error collecting GPU metrics: {e}")
+        return None
+
+def log_monitoring_info(start_time, start_gpu_metrics, count, image_size):
     end_time = time.time()
-    end_cpu_usage = psutil.cpu_percent(interval=None)
-    end_memory_usage = psutil.virtual_memory().percent
 
-    gpu_usages = []
-    gpu_temps = []
-    gpu_power_usages = []
+    gpu_metrics = log_gpu_metrics()
+    if gpu_metrics is None:
+        gpu_metrics = start_gpu_metrics
 
-    for handle in device_handles:
-        gpu_usage = pynvml.nvmlDeviceGetUtilizationRates(handle)
-        gpu_temp = pynvml.nvmlDeviceGetTemperature(handle, pynvml.NVML_TEMPERATURE_GPU)
-        gpu_power = pynvml.nvmlDeviceGetPowerUsage(handle) / 1000.0  # Convert to watts
-
-        gpu_usages.append(gpu_usage.gpu)
-        gpu_temps.append(gpu_temp)
-        gpu_power_usages.append(gpu_power)
-
-    avg_gpu_usage = sum(gpu_usages) / len(gpu_usages)
-    avg_gpu_temp = sum(gpu_temps) / len(gpu_temps)
-    avg_gpu_power_usage = sum(gpu_power_usages) / len(gpu_power_usages)
-
-    cpu_usage_change = end_cpu_usage - start_cpu_usage
-    memory_usage_change = end_memory_usage - start_memory_usage
-    gpu_usage_change = avg_gpu_usage - start_gpu_usage
     duration = end_time - start_time
-
-    disk_read_bytes = psutil.disk_io_counters().read_bytes - start_disk_io.read_bytes
-    disk_write_bytes = psutil.disk_io_counters().write_bytes - start_disk_io.write_bytes
-    net_sent_bytes = psutil.net_io_counters().bytes_sent - start_net_io.bytes_sent
-    net_recv_bytes = psutil.net_io_counters().bytes_recv - start_net_io.bytes_recv
 
     ondemand_cost = calculate_cost(duration, ONDEMAND_HOSTING_COST_PER_HOUR)
     reserved_one_year_cost = calculate_cost(duration, RESERVED_ONE_YEAR_HOSTING_COST_PER_HOUR)
@@ -74,16 +74,8 @@ def log_monitoring_info(start_time, start_cpu_usage, start_memory_usage, start_g
     spot_cost = calculate_cost(duration, SPOT_HOSTING_COST_PER_HOUR)
 
     metrics = {
-        "duration": duration, 
-        "cpu_usage": max(cpu_usage_change, 0), 
-        "memory_usage": max(memory_usage_change, 0), 
-        "gpu_usage": max(gpu_usage_change, 0), 
-        "gpu_temp_change": max(avg_gpu_temp - start_gpu_temp, 0),
-        "disk_read_bytes": disk_read_bytes,
-        "disk_write_bytes": disk_write_bytes,
-        "net_sent_bytes": net_sent_bytes,
-        "net_recv_bytes": net_recv_bytes,
-        "gpu_power_usage": max(avg_gpu_power_usage, 0),
+        "duration": duration,
+        "gpu_metrics": gpu_metrics,
         "ondemand_cost": ondemand_cost,
         "reserved_one_year_cost": reserved_one_year_cost,
         "reserved_three_year_cost": reserved_three_year_cost,
@@ -93,23 +85,17 @@ def log_monitoring_info(start_time, start_cpu_usage, start_memory_usage, start_g
 
     mllogger.end(key='image_generation', value=metrics)
 
+    logging.info(f"Image {count} generated in {duration:.2f} seconds. Metrics: {metrics}")
+
     print(f"Image {count} generated in {duration:.2f} seconds.")
-    print(f"CPU usage change: {cpu_usage_change:.2f}%")
-    print(f"Memory usage change: {memory_usage_change:.2f}%")
-    print(f"GPU usage change: {gpu_usage_change:.2f}%")
-    print(f"GPU temperature change: {avg_gpu_temp - start_gpu_temp:.2f}°C")
-    print(f"Disk read bytes: {disk_read_bytes}")
-    print(f"Disk write bytes: {disk_write_bytes}")
-    print(f"Network sent bytes: {net_sent_bytes}")
-    print(f"Network received bytes: {net_recv_bytes}")
-    print(f"GPU power usage: {avg_gpu_power_usage:.2f} watts")
+    print(f"GPU metrics: {gpu_metrics}")
     print(f"On Demand Cost of image generation: ${ondemand_cost:.6f}")
     print(f"Reserved for one year Cost of image generation: ${reserved_one_year_cost:.6f}")
     print(f"Reserved for three year Cost of image generation: ${reserved_three_year_cost:.6f}")
     print(f"Spot instance Cost of image generation: ${spot_cost:.6f}")
     print(f"Image size: {image_size}")
 
-def text2Image(model, prompt, count, device_handles):
+def text2Image(model, prompt, count):
     if not os.path.exists(SERVER_NAME):
         os.makedirs(SERVER_NAME)
     
@@ -133,18 +119,15 @@ def text2Image(model, prompt, count, device_handles):
     
     # Start monitoring before image generation
     start_time = time.time()
-    start_cpu_usage = psutil.cpu_percent(interval=None)
-    start_memory_usage = psutil.virtual_memory().percent
-    start_gpu_usage = sum([pynvml.nvmlDeviceGetUtilizationRates(handle).gpu for handle in device_handles]) / len(device_handles)
-    start_gpu_temp = sum([pynvml.nvmlDeviceGetTemperature(handle, pynvml.NVML_TEMPERATURE_GPU) for handle in device_handles]) / len(device_handles)
-    start_disk_io = psutil.disk_io_counters()
-    start_net_io = psutil.net_io_counters()
+    start_gpu_metrics = log_gpu_metrics()
     
     mllogger.start(key='image_generation', value={"model": model, "prompt": prompt, "count": count})
     
     try:
+        inference_start_time = time.time()
         with autocast("cuda"):
             image = pipe(prompt)["images"][0]
+        inference_duration = time.time() - inference_start_time
         image_size = image.size
     except Exception as e:
         mllogger.end(key='image_generation', value={"error": str(e)})
@@ -155,8 +138,11 @@ def text2Image(model, prompt, count, device_handles):
     image.save(image_path)
     
     # Log monitoring info after image generation
-    log_monitoring_info(start_time, start_cpu_usage, start_memory_usage, start_gpu_usage, start_gpu_temp, start_disk_io, start_net_io, device_handles, count, image_size)
+    log_monitoring_info(start_time, start_gpu_metrics, count, image_size)
     
+    mllogger.end(key='inference_latency', value={"duration": inference_duration})
+    logging.info(f"Inference latency for image {count}: {inference_duration:.2f} seconds.")
+
     del pipe
     torch.cuda.empty_cache()
     gc.collect()
@@ -196,11 +182,10 @@ def main():
         "A vibrant coral reef teeming with sea life"
     ]
     
-    device_handles = init_gpu_monitoring()    
     for i, prompt in enumerate(prompts):
         print(f"Generating image {i+1}/{len(prompts)} for prompt: '{prompt}'")
         try:
-            text2Image(model, prompt, i+1, device_handles)
+            text2Image(model, prompt, i+1)
             print(f"Image {i+1} saved.")
         except RuntimeError as e:
             print(f"Failed to generate image {i+1}: {e}")
