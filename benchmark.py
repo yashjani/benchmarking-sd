@@ -10,6 +10,7 @@ from mlperf_logging.mllog import mllogger
 from mlperf_logging import mllog
 import argparse
 
+
 def use_auth_token():
     return "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"
 
@@ -43,7 +44,7 @@ def log_gpu_metrics():
         logging.error(f"Error collecting GPU metrics: {e}")
         return None
 
-def log_monitoring_info(start_time, start_gpu_metrics, count, image_size, costs):
+def log_monitoring_info(start_time, start_gpu_metrics, count, image_size, costs, server_name):
     end_time = time.time()
 
     gpu_metrics = log_gpu_metrics()
@@ -64,28 +65,15 @@ def log_monitoring_info(start_time, start_gpu_metrics, count, image_size, costs)
         "reserved_one_year_cost": reserved_one_year_cost,
         "reserved_three_year_cost": reserved_three_year_cost,
         "spot_cost": spot_cost,
-        "image_size": image_size
+        "image_size": image_size,
+        "instance_type" : server_name 
     }
 
     mllogger.end(key='image_generation', value=metrics)
 
-    logging.info(f"Image {count} generated in {duration:.2f} seconds. Metrics: {metrics}")
-
-    print(f"Image {count} generated in {duration:.2f} seconds.")
-    print(f"GPU metrics: {gpu_metrics}")
-    print(f"On Demand Cost of image generation: ${ondemand_cost:.6f}")
-    print(f"Reserved for one year Cost of image generation: ${reserved_one_year_cost:.6f}")
-    print(f"Reserved for three year Cost of image generation: ${reserved_three_year_cost:.6f}")
-    print(f"Spot instance Cost of image generation: ${spot_cost:.6f}")
-    print(f"Image size: {image_size}")
-
 def text2Image(model, prompt, count, server_name, costs):
     if not os.path.exists(server_name):
-        os.makedirs(server_name)
-    
-    mllogger.start(key='model_loading', value={"model": model})
-    start_model_loading_time = time.time()
-    
+        os.makedirs(server_name)    
     try:
         pipe = StableDiffusionPipeline.from_pretrained(
             model,
@@ -93,19 +81,14 @@ def text2Image(model, prompt, count, server_name, costs):
             use_auth_token=use_auth_token()
         ).to("cuda")
     except Exception as e:
-        mllogger.end(key='model_loading', value={"duration": time.time() - start_model_loading_time, "error": str(e)})
         print(f"Error loading model: {e}")
         return
-    
-    model_loading_duration = time.time() - start_model_loading_time
-    mllogger.end(key='model_loading', value={"duration": model_loading_duration})
-    print(f"Model loaded in {model_loading_duration:.2f} seconds.")
-    
+        
     # Start monitoring before image generation
     start_time = time.time()
     start_gpu_metrics = log_gpu_metrics()
     
-    mllogger.start(key='image_generation', value={"model": model, "prompt": prompt, "count": count})
+   # mllogger.start(key='image_generation', value={"model": model, "prompt": prompt, "count": count, "instance_type" : server_name})
     
     try:
         inference_start_time = time.time()
@@ -122,11 +105,7 @@ def text2Image(model, prompt, count, server_name, costs):
     image.save(image_path)
     
     # Log monitoring info after image generation
-    log_monitoring_info(start_time, start_gpu_metrics, count, image_size, costs)
-    
-    mllogger.end(key='inference_latency', value={"duration": inference_duration})
-    logging.info(f"Inference latency for image {count}: {inference_duration:.2f} seconds.")
-
+    log_monitoring_info(start_time, start_gpu_metrics, count, image_size, costs, server_name)
     del pipe
     torch.cuda.empty_cache()
     gc.collect()
