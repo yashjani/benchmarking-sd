@@ -77,7 +77,6 @@ def text2Image(model, prompt, count, server_name, costs):
     try:
         pipe = StableDiffusionPipeline.from_pretrained(
             model,
-            torch_dtype=torch.float16,
             use_auth_token=use_auth_token()
         ).to("cuda")
     except Exception as e:
@@ -92,8 +91,8 @@ def text2Image(model, prompt, count, server_name, costs):
     
     try:
         inference_start_time = time.time()
-        with autocast("cuda"):
-            image = pipe(prompt)["images"][0]
+        with torch.no_grad():
+            image = pipe(prompt).images[0]
         inference_duration = time.time() - inference_start_time
         image_size = image.size
     except Exception as e:
