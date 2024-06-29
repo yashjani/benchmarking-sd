@@ -5,25 +5,22 @@ import gc
 import subprocess
 import logging
 from torch import autocast
-from diffusers import StableDiffusion3Pipeline
+from diffusers import StableDiffusionPipeline
 from mlperf_logging.mllog import mllogger
 from mlperf_logging import mllog
 import argparse
-from huggingface_hub import login
+from diffusers import StableDiffusion3Pipeline
 
 def use_auth_token():
     return "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"
-
 def calculate_cost(duration_seconds, cost):
     return (duration_seconds / 3600) * cost
-
 def log_gpu_metrics():
     try:
         gpu_output = subprocess.check_output(
             ['nvidia-smi', '--query-gpu=utilization.gpu,utilization.memory,memory.total,memory.used,memory.free,temperature.gpu,power.draw', '--format=csv,noheader,nounits'],
             stderr=subprocess.STDOUT
         ).decode('utf-8').strip().split('\n')
-
         gpu_metrics = []
         for gpu in gpu_output:
             metrics = [x.strip() for x in gpu.split(',')]
@@ -43,21 +40,16 @@ def log_gpu_metrics():
     except Exception as e:
         logging.error(f"Error collecting GPU metrics: {e}")
         return None
-
 def log_monitoring_info(start_time, start_gpu_metrics, count, image_size, costs, server_name):
     end_time = time.time()
-
     gpu_metrics = log_gpu_metrics()
     if gpu_metrics is None:
         gpu_metrics = start_gpu_metrics
-
     duration = end_time - start_time
-
     ondemand_cost = calculate_cost(duration, costs["ondemand"])
     reserved_one_year_cost = calculate_cost(duration, costs["reserved_one_year"])
     reserved_three_year_cost = calculate_cost(duration, costs["reserved_three_year"])
     spot_cost = calculate_cost(duration, costs["spot"])
-
     metrics = {
         "duration": duration,
         "gpu_metrics": gpu_metrics,
@@ -68,9 +60,7 @@ def log_monitoring_info(start_time, start_gpu_metrics, count, image_size, costs,
         "image_size": image_size,
         "instance_type" : server_name 
     }
-
     mllogger.end(key='image_generation', value=metrics)
-
 def text2Image(model, prompt, count, server_name, costs):
     if not os.path.exists(server_name):
         os.makedirs(server_name)    
@@ -85,9 +75,9 @@ def text2Image(model, prompt, count, server_name, costs):
     # Start monitoring before image generation
     start_time = time.time()
     start_gpu_metrics = log_gpu_metrics()
-    
-    mllogger.start(key='image_generation', value={"model": model, "prompt": prompt, "count": count, "instance_type" : server_name})
-    
+
+   # mllogger.start(key='image_generation', value={"model": model, "prompt": prompt, "count": count, "instance_type" : server_name})
+
     try:
         inference_start_time = time.time()
         with torch.no_grad():
@@ -114,7 +104,6 @@ def text2Image(model, prompt, count, server_name, costs):
     del pipe
     torch.cuda.empty_cache()
     gc.collect()
-
 def main():
     parser = argparse.ArgumentParser(description='Stable Diffusion Benchmarking')
     parser.add_argument('--server_name', type=str, required=True, help='Name of the server')
@@ -123,9 +112,7 @@ def main():
     parser.add_argument('--reserved_one_year_cost', type=float, required=True, help='Reserved one-year hosting cost per hour')
     parser.add_argument('--reserved_three_year_cost', type=float, required=True, help='Reserved three-year hosting cost per hour')
     parser.add_argument('--spot_cost', type=float, required=True, help='Spot hosting cost per hour')
-
     args = parser.parse_args()
-
     server_name = args.server_name
     model_name = args.model_name
     costs = {
@@ -134,17 +121,13 @@ def main():
         "reserved_three_year": args.reserved_three_year_cost,
         "spot": args.spot_cost
     }
-
     if not os.path.exists(server_name + '/log'):
         os.makedirs(server_name + '/log')
     mllog.config(filename=server_name + '/log/mlperf_log.txt')
-
     logging.basicConfig(filename=server_name + '/image_generation.log', level=logging.INFO)
-
     # Write the PID to a file in /tmp
     with open('/tmp/stable_diffusion.pid', 'w') as f:
         f.write(str(os.getpid()))
-
     prompts = [
         "A beautiful landscape with mountains and rivers",
         "A futuristic cityscape at night",
@@ -197,7 +180,7 @@ def main():
         "A serene lagoon with tropical fish",
         "A dramatic volcanic eruption with lava flows"
     ]
-    
+
     for i, prompt in enumerate(prompts):
         print(f"Generating image {i+1}/{len(prompts)} for prompt: '{prompt}'")
         try:
@@ -207,7 +190,6 @@ def main():
             print(f"Failed to generate image {i+1}: {e}")
             torch.cuda.empty_cache()
             gc.collect()
-
 if __name__ == "__main__":
     os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
     main()
