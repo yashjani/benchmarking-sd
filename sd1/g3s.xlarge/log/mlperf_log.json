@@ -1,0 +1,994 @@
+{
+    "data": [
+        {
+            "namespace": "",
+            "time_ms": 1717758608179,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 56.77440285682678,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "36",
+                        "gpu_memory_utilization": "27",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "52",
+                        "gpu_power_draw": "47.77"
+                    }
+                ],
+                "ondemand_cost": 0.011828000595172247,
+                "reserved_one_year_cost": 0.008689637770586544,
+                "reserved_three_year_cost": 0.006891781680120362,
+                "spot_cost": 0.005787834957904286,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717758663287,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.243468284606934,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "52",
+                        "gpu_memory_utilization": "39",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "62",
+                        "gpu_power_draw": "50.64"
+                    }
+                ],
+                "ondemand_cost": 0.010884055892626445,
+                "reserved_one_year_cost": 0.007996153062449562,
+                "reserved_three_year_cost": 0.006341776566770341,
+                "spot_cost": 0.0053259313501252065,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717758718369,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.47875118255615,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "38",
+                        "gpu_memory_utilization": "28",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "68",
+                        "gpu_power_draw": "52.56"
+                    }
+                ],
+                "ondemand_cost": 0.010933073163032532,
+                "reserved_one_year_cost": 0.0080321644171079,
+                "reserved_three_year_cost": 0.006370337296326955,
+                "spot_cost": 0.005349917134443919,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717758773576,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.627166986465454,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "78",
+                        "gpu_memory_utilization": "47",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "71",
+                        "gpu_power_draw": "53.16"
+                    }
+                ],
+                "ondemand_cost": 0.010963993122180302,
+                "reserved_one_year_cost": 0.008054880280428462,
+                "reserved_three_year_cost": 0.006388353325857056,
+                "spot_cost": 0.005365047301120228,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717758828979,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.78733801841736,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "73",
+                        "gpu_memory_utilization": "51",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "71",
+                        "gpu_power_draw": "53.28"
+                    }
+                ],
+                "ondemand_cost": 0.010997362087170283,
+                "reserved_one_year_cost": 0.008079395346707768,
+                "reserved_three_year_cost": 0.006407796309457885,
+                "spot_cost": 0.005381375847988658,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717758884371,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.77285861968994,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "31",
+                        "gpu_memory_utilization": "23",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "71",
+                        "gpu_power_draw": "54.12"
+                    }
+                ],
+                "ondemand_cost": 0.010994345545768738,
+                "reserved_one_year_cost": 0.008077179194291434,
+                "reserved_three_year_cost": 0.0064060386713345845,
+                "spot_cost": 0.005379899753729503,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717758939846,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.84810829162598,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "65",
+                        "gpu_memory_utilization": "48",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "71",
+                        "gpu_power_draw": "54.00"
+                    }
+                ],
+                "ondemand_cost": 0.011010022560755412,
+                "reserved_one_year_cost": 0.008088696574634976,
+                "reserved_three_year_cost": 0.0064151731454001526,
+                "spot_cost": 0.005387571039729647,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717758995279,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.81508183479309,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "65",
+                        "gpu_memory_utilization": "49",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "71",
+                        "gpu_power_draw": "53.65"
+                    }
+                ],
+                "ondemand_cost": 0.011003142048915227,
+                "reserved_one_year_cost": 0.008083641691936387,
+                "reserved_three_year_cost": 0.006411164100501272,
+                "spot_cost": 0.005384204175935851,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717759050701,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.80146527290344,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "63",
+                        "gpu_memory_utilization": "47",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "72",
+                        "gpu_power_draw": "54.00"
+                    }
+                ],
+                "ondemand_cost": 0.011000305265188217,
+                "reserved_one_year_cost": 0.008081557601491611,
+                "reserved_three_year_cost": 0.006409511201183001,
+                "spot_cost": 0.005382816043098767,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717759106160,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.833038330078125,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "73",
+                        "gpu_memory_utilization": "53",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "72",
+                        "gpu_power_draw": "54.26"
+                    }
+                ],
+                "ondemand_cost": 0.011006882985432943,
+                "reserved_one_year_cost": 0.00808639003329807,
+                "reserved_three_year_cost": 0.006413343819512261,
+                "spot_cost": 0.005386034740871853,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717759161529,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.76040315628052,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "30",
+                        "gpu_memory_utilization": "23",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "72",
+                        "gpu_power_draw": "53.87"
+                    }
+                ],
+                "ondemand_cost": 0.01099175065755844,
+                "reserved_one_year_cost": 0.008075272816419602,
+                "reserved_three_year_cost": 0.0064045267164707185,
+                "spot_cost": 0.00537862998843193,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717759216874,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.74250411987305,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "74",
+                        "gpu_memory_utilization": "55",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "72",
+                        "gpu_power_draw": "54.74"
+                    }
+                ],
+                "ondemand_cost": 0.010988021691640218,
+                "reserved_one_year_cost": 0.008072533269458348,
+                "reserved_three_year_cost": 0.006402353972329034,
+                "spot_cost": 0.00537680528110928,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717759272316,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.796175718307495,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "74",
+                        "gpu_memory_utilization": "55",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "72",
+                        "gpu_power_draw": "54.24"
+                    }
+                ],
+                "ondemand_cost": 0.010999203274647394,
+                "reserved_one_year_cost": 0.008080748005774288,
+                "reserved_three_year_cost": 0.006408869108027882,
+                "spot_cost": 0.005382276802394125,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717759327734,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.811224937438965,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "65",
+                        "gpu_memory_utilization": "49",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "72",
+                        "gpu_power_draw": "54.00"
+                    }
+                ],
+                "ondemand_cost": 0.011002338528633117,
+                "reserved_one_year_cost": 0.008083051372369131,
+                "reserved_three_year_cost": 0.006410695916016897,
+                "spot_cost": 0.005383810986677806,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717759383229,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.87634992599487,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "72",
+                        "gpu_memory_utilization": "50",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "72",
+                        "gpu_power_draw": "54.00"
+                    }
+                ],
+                "ondemand_cost": 0.011015906234582266,
+                "reserved_one_year_cost": 0.008093019113673104,
+                "reserved_three_year_cost": 0.006418601366016599,
+                "spot_cost": 0.005390450117455588,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717759438749,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.91260814666748,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "29",
+                        "gpu_memory_utilization": "21",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "72",
+                        "gpu_power_draw": "54.00"
+                    }
+                ],
+                "ondemand_cost": 0.011023460030555725,
+                "reserved_one_year_cost": 0.008098568635781607,
+                "reserved_three_year_cost": 0.006423002711137136,
+                "spot_cost": 0.005394146441618602,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717759494286,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.91006541252136,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "11",
+                        "gpu_memory_utilization": "8",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "72",
+                        "gpu_power_draw": "53.88"
+                    }
+                ],
+                "ondemand_cost": 0.011022930294275285,
+                "reserved_one_year_cost": 0.008098179456194243,
+                "reserved_three_year_cost": 0.006422694051464399,
+                "spot_cost": 0.005393887223998706,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717759549712,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.810038566589355,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "79",
+                        "gpu_memory_utilization": "48",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "72",
+                        "gpu_power_draw": "54.49"
+                    }
+                ],
+                "ondemand_cost": 0.011002091368039448,
+                "reserved_one_year_cost": 0.00808286979171965,
+                "reserved_three_year_cost": 0.006410551903777652,
+                "spot_cost": 0.005383690042760637,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717759605199,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.877410650253296,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "42",
+                        "gpu_memory_utilization": "32",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "73",
+                        "gpu_power_draw": "53.89"
+                    }
+                ],
+                "ondemand_cost": 0.01101612721880277,
+                "reserved_one_year_cost": 0.008093181463413769,
+                "reserved_three_year_cost": 0.006418730126155747,
+                "spot_cost": 0.005390558252400822,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717759660719,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.906381130218506,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "66",
+                        "gpu_memory_utilization": "49",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "73",
+                        "gpu_power_draw": "54.38"
+                    }
+                ],
+                "ondemand_cost": 0.011022162735462188,
+                "reserved_one_year_cost": 0.008097615556319555,
+                "reserved_three_year_cost": 0.006422246820529302,
+                "spot_cost": 0.005393511631886164,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717759716215,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.876742362976074,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "13",
+                        "gpu_memory_utilization": "10",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "72",
+                        "gpu_power_draw": "54.11"
+                    }
+                ],
+                "ondemand_cost": 0.011015987992286683,
+                "reserved_one_year_cost": 0.008093079178333283,
+                "reserved_three_year_cost": 0.006418649003505707,
+                "spot_cost": 0.005390490124225616,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717759771575,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.76963782310486,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "66",
+                        "gpu_memory_utilization": "49",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "72",
+                        "gpu_power_draw": "54.61"
+                    }
+                ],
+                "ondemand_cost": 0.010993674546480179,
+                "reserved_one_year_cost": 0.008076686233480772,
+                "reserved_three_year_cost": 0.006405647702415784,
+                "spot_cost": 0.0053795714114109675,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717759827064,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.896477460861206,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "76",
+                        "gpu_memory_utilization": "50",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "73",
+                        "gpu_power_draw": "54.85"
+                    }
+                ],
+                "ondemand_cost": 0.011020099471012752,
+                "reserved_one_year_cost": 0.008096099744704035,
+                "reserved_three_year_cost": 0.006421044625110096,
+                "spot_cost": 0.005392502007815573,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717759882526,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.878506898880005,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "23",
+                        "gpu_memory_utilization": "17",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "72",
+                        "gpu_power_draw": "54.01"
+                    }
+                ],
+                "ondemand_cost": 0.011016355603933334,
+                "reserved_one_year_cost": 0.008093349250356357,
+                "reserved_three_year_cost": 0.0064188631985584894,
+                "spot_cost": 0.005390670008858045,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717759938051,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.93966460227966,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "47",
+                        "gpu_memory_utilization": "35",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "72",
+                        "gpu_power_draw": "54.24"
+                    }
+                ],
+                "ondemand_cost": 0.011029096792141597,
+                "reserved_one_year_cost": 0.008102709776626693,
+                "reserved_three_year_cost": 0.00642628706422117,
+                "spot_cost": 0.005396904696954621,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717759993467,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.834513902664185,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "65",
+                        "gpu_memory_utilization": "49",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "73",
+                        "gpu_power_draw": "54.24"
+                    }
+                ],
+                "ondemand_cost": 0.011007190396388372,
+                "reserved_one_year_cost": 0.008086615877879991,
+                "reserved_three_year_cost": 0.006413522937628958,
+                "spot_cost": 0.0053861851672993765,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717760048919,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.862680196762085,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "62",
+                        "gpu_memory_utilization": "47",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "72",
+                        "gpu_power_draw": "54.24"
+                    }
+                ],
+                "ondemand_cost": 0.011013058374325434,
+                "reserved_one_year_cost": 0.008090926885671087,
+                "reserved_three_year_cost": 0.006416942012773619,
+                "spot_cost": 0.005389056564503246,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717760104369,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.863272190093994,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "64",
+                        "gpu_memory_utilization": "48",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "72",
+                        "gpu_power_draw": "54.00"
+                    }
+                ],
+                "ondemand_cost": 0.011013181706269581,
+                "reserved_one_year_cost": 0.008091017493539387,
+                "reserved_three_year_cost": 0.00641701387418641,
+                "spot_cost": 0.005389116914934582,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717760159907,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.94989013671875,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "21",
+                        "gpu_memory_utilization": "15",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "72",
+                        "gpu_power_draw": "54.13"
+                    }
+                ],
+                "ondemand_cost": 0.011031227111816406,
+                "reserved_one_year_cost": 0.00810427485148112,
+                "reserved_three_year_cost": 0.006427528330485026,
+                "spot_cost": 0.005397947133382161,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        },
+        {
+            "namespace": "",
+            "time_ms": 1717760215443,
+            "event_type": "INTERVAL_END",
+            "key": "image_generation",
+            "value": {
+                "duration": 52.94584846496582,
+                "gpu_metrics": [
+                    {
+                        "gpu_utilization": "74",
+                        "gpu_memory_utilization": "54",
+                        "gpu_memory_total": "7680",
+                        "gpu_memory_used": "6928",
+                        "gpu_memory_free": "684",
+                        "gpu_temperature": "73",
+                        "gpu_power_draw": "54.00"
+                    }
+                ],
+                "ondemand_cost": 0.01103038509686788,
+                "reserved_one_year_cost": 0.008103656251165603,
+                "reserved_three_year_cost": 0.006427037716441685,
+                "spot_cost": 0.005397535107400682,
+                "image_size": [
+                    512,
+                    512
+                ],
+                "instance_type": "g3s.xlarge"
+            },
+            "metadata": {
+                "file": "/home/ubuntu/benchmarking-sd/benchmark.py",
+                "lineno": 72
+            }
+        }
+    ]
+}
