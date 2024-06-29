@@ -10,3 +10,5 @@ pynvml
 boto3
 safetensors
 transformers[sentencepiece]
+matplotlib
+seaborn

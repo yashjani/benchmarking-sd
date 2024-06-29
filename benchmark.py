@@ -36,12 +36,12 @@ class GPUMonitor(threading.Thread):
     def __init__(self, total_memory):
         super().__init__()
         self.running = True
-        self.max_gpu_utilization = 0
-        self.max_memory_utilization = 0
-        self.max_memory_used = 0
-        self.max_memory_free = 0
-        self.max_temperature = 0
-        self.max_power_draw = 0
+        self.gpu_utilization = 0
+        self.gpu_memory_utilization = 0
+        self.gpu_memory_used = 0
+        self.gpu_memory_free = 0
+        self.gpu_temperature = 0
+        self.gpu_power_draw = 0
         self.total_memory = total_memory
 
     def run(self):
@@ -60,18 +60,18 @@ class GPUMonitor(threading.Thread):
 
                 mem_util = (mem_used / self.total_memory) * 100
 
-                if gpu_util > self.max_gpu_utilization:
-                    self.max_gpu_utilization = gpu_util
-                if mem_util > self.max_memory_utilization:
-                    self.max_memory_utilization = mem_util
-                if mem_used > self.max_memory_used:
-                    self.max_memory_used = mem_used
-                if mem_free > self.max_memory_free:
-                    self.max_memory_free = mem_free
-                if temp > self.max_temperature:
-                    self.max_temperature = temp
-                if power_draw > self.max_power_draw:
-                    self.max_power_draw = power_draw
+                if gpu_util > self.gpu_gpu_utilization:
+                    self.gpu_utilization = gpu_util
+                if mem_util > self.gpu_memory_utilization:
+                    self.gpu_memory_utilization = mem_util
+                if mem_used > self.gpu_memory_used:
+                    self.gpu_memory_used = mem_used
+                if mem_free > self.gpu_memory_free:
+                    self.gpu_memory_free = mem_free
+                if temp > self.gpu_temperature:
+                    self.gpu_temperature = temp
+                if power_draw > self.gpu_power_draw:
+                    self.gpu_power_draw = power_draw
 
             time.sleep(1)
 
@@ -88,12 +88,12 @@ def log_monitoring_info(start_time, count, image_size, costs, server_name, gpu_m
     spot_cost = calculate_cost(duration, costs["spot"])
     metrics = {
         "duration": duration,
-        "max_gpu_utilization": gpu_monitor.max_gpu_utilization,
-        "max_memory_utilization": gpu_monitor.max_memory_utilization,
-        "max_memory_used": gpu_monitor.max_memory_used,
-        "max_memory_free": gpu_monitor.max_memory_free,
-        "max_temperature": gpu_monitor.max_temperature,
-        "max_power_draw": gpu_monitor.max_power_draw,
+        "gpu_utilization": gpu_monitor.gpu_utilization,
+        "gpu_memory_utilization": gpu_monitor.gpu_memory_utilization,
+        "gpu_memory_used": gpu_monitor.gpu_memory_used,
+        "gpu_memory_free": gpu_monitor.gpu_memory_free,
+        "gpu_temperature": gpu_monitor.gpu_temperature,
+        "gpu_power_draw": gpu_monitor.gpu_power_draw,
         "ondemand_cost": ondemand_cost,
         "reserved_one_year_cost": reserved_one_year_cost,
         "reserved_three_year_cost": reserved_three_year_cost,
