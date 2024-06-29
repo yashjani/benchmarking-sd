@@ -4,47 +4,83 @@ import torch
 import gc
 import subprocess
 import logging
+import threading
 from torch import autocast
-from diffusers import StableDiffusionPipeline
+from diffusers import StableDiffusion3Pipeline
 from mlperf_logging.mllog import mllogger
 from mlperf_logging import mllog
 import argparse
-from diffusers import StableDiffusion3Pipeline
+from huggingface_hub import login
 
+# Log in to Hugging Face
+#login()
+
+# Function to use the authentication token
 def use_auth_token():
     return "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"
+
+# Function to calculate cost
 def calculate_cost(duration_seconds, cost):
     return (duration_seconds / 3600) * cost
-def log_gpu_metrics():
-    try:
-        gpu_output = subprocess.check_output(
-            ['nvidia-smi', '--query-gpu=utilization.gpu,utilization.memory,memory.total,memory.used,memory.free,temperature.gpu,power.draw', '--format=csv,noheader,nounits'],
-            stderr=subprocess.STDOUT
-        ).decode('utf-8').strip().split('\n')
-        gpu_metrics = []
-        for gpu in gpu_output:
-            metrics = [x.strip() for x in gpu.split(',')]
-            gpu_metrics.append({
-                'gpu_utilization': metrics[0],
-                'gpu_memory_utilization': metrics[1],
-                'gpu_memory_total': metrics[2],
-                'gpu_memory_used': metrics[3],
-                'gpu_memory_free': metrics[4],
-                'gpu_temperature': metrics[5],  # GPU temperature
-                'gpu_power_draw': metrics[6]  # Power draw in watts
-            })
-        return gpu_metrics
-    except subprocess.CalledProcessError as e:
-        logging.error(f"Error collecting GPU metrics: {e.output.decode('utf-8')}")
-        return None
-    except Exception as e:
-        logging.error(f"Error collecting GPU metrics: {e}")
-        return None
-def log_monitoring_info(start_time, start_gpu_metrics, count, image_size, costs, server_name):
+
+# Function to fetch the total GPU memory using nvidia-smi
+def fetch_total_memory():
+    gpu_output = subprocess.check_output(
+        ['nvidia-smi', '--query-gpu=memory.total', '--format=csv,noheader,nounits'],
+        stderr=subprocess.STDOUT
+    ).decode('utf-8').strip().split('\n')
+    return int(gpu_output[0])
+
+# Function to continuously log GPU metrics in a separate thread
+class GPUMonitor(threading.Thread):
+    def __init__(self, total_memory):
+        super().__init__()
+        self.running = True
+        self.max_gpu_utilization = 0
+        self.max_memory_utilization = 0
+        self.max_memory_used = 0
+        self.max_memory_free = 0
+        self.max_temperature = 0
+        self.max_power_draw = 0
+        self.total_memory = total_memory
+
+    def run(self):
+        while self.running:
+            gpu_output = subprocess.check_output(
+                ['nvidia-smi', '--query-gpu=utilization.gpu,memory.used,memory.free,temperature.gpu,power.draw', '--format=csv,noheader,nounits'],
+                stderr=subprocess.STDOUT
+            ).decode('utf-8').strip().split('\n')
+            for gpu in gpu_output:
+                metrics = [x.strip() for x in gpu.split(',')]
+                gpu_util = int(metrics[0])
+                mem_used = int(metrics[1])
+                mem_free = int(metrics[2])
+                temp = float(metrics[3])
+                power_draw = float(metrics[4])
+
+                mem_util = (mem_used / self.total_memory) * 100
+
+                if gpu_util > self.max_gpu_utilization:
+                    self.max_gpu_utilization = gpu_util
+                if mem_util > self.max_memory_utilization:
+                    self.max_memory_utilization = mem_util
+                if mem_used > self.max_memory_used:
+                    self.max_memory_used = mem_used
+                if mem_free > self.max_memory_free:
+                    self.max_memory_free = mem_free
+                if temp > self.max_temperature:
+                    self.max_temperature = temp
+                if power_draw > self.max_power_draw:
+                    self.max_power_draw = power_draw
+
+            time.sleep(1)
+
+    def stop(self):
+        self.running = False
+
+# Function to log monitoring information
+def log_monitoring_info(start_time, count, image_size, costs, server_name, gpu_monitor):
     end_time = time.time()
-    gpu_metrics = log_gpu_metrics()
-    if gpu_metrics is None:
-        gpu_metrics = start_gpu_metrics
     duration = end_time - start_time
     ondemand_cost = calculate_cost(duration, costs["ondemand"])
     reserved_one_year_cost = calculate_cost(duration, costs["reserved_one_year"])
@@ -52,37 +88,45 @@ def log_monitoring_info(start_time, start_gpu_metrics, count, image_size, costs,
     spot_cost = calculate_cost(duration, costs["spot"])
     metrics = {
         "duration": duration,
-        "gpu_metrics": gpu_metrics,
+        "max_gpu_utilization": gpu_monitor.max_gpu_utilization,
+        "max_memory_utilization": gpu_monitor.max_memory_utilization,
+        "max_memory_used": gpu_monitor.max_memory_used,
+        "max_memory_free": gpu_monitor.max_memory_free,
+        "max_temperature": gpu_monitor.max_temperature,
+        "max_power_draw": gpu_monitor.max_power_draw,
         "ondemand_cost": ondemand_cost,
         "reserved_one_year_cost": reserved_one_year_cost,
         "reserved_three_year_cost": reserved_three_year_cost,
         "spot_cost": spot_cost,
         "image_size": image_size,
-        "instance_type" : server_name 
+        "instance_type": server_name
     }
+    logging.info(f"Metrics for image {count}: {metrics}")
     mllogger.end(key='image_generation', value=metrics)
-def text2Image(model, prompt, count, server_name, costs):
+
+# Function to generate an image from text
+def text2Image(model, prompt, count, server_name, costs, total_memory):
     if not os.path.exists(server_name):
-        os.makedirs(server_name)    
+        os.makedirs(server_name)
     try:
-        pipe = StableDiffusion3Pipeline.from_pretrained(model, 
-                                                        torch_dtype=torch.float16)
+        pipe = StableDiffusion3Pipeline.from_pretrained(model, torch_dtype=torch.float16)
         pipe.enable_model_cpu_offload()
     except Exception as e:
         print(f"Error loading model: {e}")
         return
-        
+
     # Start monitoring before image generation
     start_time = time.time()
-    start_gpu_metrics = log_gpu_metrics()
 
-   # mllogger.start(key='image_generation', value={"model": model, "prompt": prompt, "count": count, "instance_type" : server_name})
+    # Start GPU monitoring thread
+    gpu_monitor = GPUMonitor(total_memory)
+    gpu_monitor.start()
 
     try:
         inference_start_time = time.time()
         with torch.no_grad():
             image = pipe(
-                prompt= prompt,
+                prompt=prompt,
                 negative_prompt="",
                 num_inference_steps=28,
                 height=1024,
@@ -94,16 +138,22 @@ def text2Image(model, prompt, count, server_name, costs):
     except Exception as e:
         mllogger.end(key='image_generation', value={"error": str(e)})
         print(f"Error generating image: {e}")
+        gpu_monitor.stop()
         return
-    
+
     image_path = os.path.join(server_name, f"{count}.png")
     image.save(image_path)
-    
+
+    # Stop GPU monitoring thread
+    gpu_monitor.stop()
+    gpu_monitor.join()
+
     # Log monitoring info after image generation
-    log_monitoring_info(start_time, start_gpu_metrics, count, image_size, costs, server_name)
+    log_monitoring_info(start_time, count, image_size, costs, server_name, gpu_monitor)
     del pipe
     torch.cuda.empty_cache()
     gc.collect()
+
 def main():
     parser = argparse.ArgumentParser(description='Stable Diffusion Benchmarking')
     parser.add_argument('--server_name', type=str, required=True, help='Name of the server')
@@ -113,6 +163,7 @@ def main():
     parser.add_argument('--reserved_three_year_cost', type=float, required=True, help='Reserved three-year hosting cost per hour')
     parser.add_argument('--spot_cost', type=float, required=True, help='Spot hosting cost per hour')
     args = parser.parse_args()
+
     server_name = args.server_name
     model_name = args.model_name
     costs = {
@@ -121,13 +172,19 @@ def main():
         "reserved_three_year": args.reserved_three_year_cost,
         "spot": args.spot_cost
     }
+    
+    # Fetch total memory dynamically
+    total_memory = fetch_total_memory()
+
     if not os.path.exists(server_name + '/log'):
         os.makedirs(server_name + '/log')
     mllog.config(filename=server_name + '/log/mlperf_log.txt')
     logging.basicConfig(filename=server_name + '/image_generation.log', level=logging.INFO)
+
     # Write the PID to a file in /tmp
     with open('/tmp/stable_diffusion.pid', 'w') as f:
         f.write(str(os.getpid()))
+
     prompts = [
         "A beautiful landscape with mountains and rivers",
         "A futuristic cityscape at night",
@@ -184,12 +241,13 @@ def main():
     for i, prompt in enumerate(prompts):
         print(f"Generating image {i+1}/{len(prompts)} for prompt: '{prompt}'")
         try:
-            text2Image(model_name, prompt, i+1, server_name, costs)
+            text2Image(model_name, prompt, i+1, server_name, costs, total_memory)
             print(f"Image {i+1} saved.")
         except RuntimeError as e:
             print(f"Failed to generate image {i+1}: {e}")
             torch.cuda.empty_cache()
             gc.collect()
+
 if __name__ == "__main__":
     os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
     main()
