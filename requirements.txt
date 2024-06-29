@@ -8,3 +8,5 @@ nvidia-ml-py3
 git+https://github.com/mlperf/logging.git@4.0.0-rc2
 pynvml
 boto3
+safetensors
+transformers[sentencepiece]

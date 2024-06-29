@@ -5,11 +5,11 @@ import gc
 import subprocess
 import logging
 from torch import autocast
-from diffusers import StableDiffusionPipeline
+from diffusers import StableDiffusion3Pipeline
 from mlperf_logging.mllog import mllogger
 from mlperf_logging import mllog
 import argparse
-
+from huggingface_hub import login
 
 def use_auth_token():
     return "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"
@@ -75,10 +75,9 @@ def text2Image(model, prompt, count, server_name, costs):
     if not os.path.exists(server_name):
         os.makedirs(server_name)    
     try:
-        pipe = StableDiffusionPipeline.from_pretrained(
-            model,
-            use_auth_token=use_auth_token()
-        ).to("cuda")
+        pipe = StableDiffusion3Pipeline.from_pretrained(model, 
+                                                        torch_dtype=torch.float16)
+        pipe.enable_model_cpu_offload()
     except Exception as e:
         print(f"Error loading model: {e}")
         return
@@ -87,12 +86,19 @@ def text2Image(model, prompt, count, server_name, costs):
     start_time = time.time()
     start_gpu_metrics = log_gpu_metrics()
     
-   # mllogger.start(key='image_generation', value={"model": model, "prompt": prompt, "count": count, "instance_type" : server_name})
+    mllogger.start(key='image_generation', value={"model": model, "prompt": prompt, "count": count, "instance_type" : server_name})
     
     try:
         inference_start_time = time.time()
         with torch.no_grad():
-            image = pipe(prompt).images[0]
+            image = pipe(
+                prompt= prompt,
+                negative_prompt="",
+                num_inference_steps=28,
+                height=1024,
+                width=1024,
+                guidance_scale=7.0,
+            ).images[0]
         inference_duration = time.time() - inference_start_time
         image_size = image.size
     except Exception as e:
@@ -169,7 +175,27 @@ def main():
         "A majestic eagle soaring over the Grand Canyon",
         "A charming small town during Christmas",
         "A sci-fi laboratory with advanced technology",
-        "A vibrant coral reef teeming with sea life"
+        "A vibrant coral reef teeming with sea life",
+        "A peaceful meadow with wildflowers in bloom",
+        "A majestic lion roaming the savannah",
+        "A rustic farmhouse in a rolling countryside",
+        "A bustling harbor with ships and seagulls",
+        "A mystical cave with glowing crystals",
+        "A colorful hot air balloon festival",
+        "A tranquil river winding through a forest",
+        "A futuristic robot city",
+        "A serene monastery in the mountains",
+        "A beautiful butterfly garden",
+        "A grand cathedral with stained glass windows",
+        "A tropical rainforest with exotic animals",
+        "A snowy mountain peak under a starry sky",
+        "A quaint village by the sea",
+        "A magnificent palace with lush gardens",
+        "A wild west town with cowboys",
+        "A magical unicorn in an enchanted forest",
+        "A bustling train station in the 1920s",
+        "A serene lagoon with tropical fish",
+        "A dramatic volcanic eruption with lava flows"
     ]
     
     for i, prompt in enumerate(prompts):

@@ -37,7 +37,7 @@ git pull
 pip3 install -r requirements.txt
 
 # Run the benchmark script
-/usr/bin/python3 /home/ubuntu/benchmarking-sd/benchmark.py --server_name "p3.2xlarge" --model_name "CompVis/stable-diffusion-v1-4" --ondemand_cost 3.060 --spot_cost 1.559 --reserved_one_year_cost 2.088 --reserved_three_year_cost 1.132
+/usr/bin/python3 /home/ubuntu/benchmarking-sd/benchmark.py --server_name "p3.2xlarge" --model_name "stabilityai/stable-diffusion-3-medium-diffusers" --ondemand_cost 3.060 --spot_cost 1.559 --reserved_one_year_cost 2.088 --reserved_three_year_cost 1.132
 
 # Commit and push any changes
 git add -A
