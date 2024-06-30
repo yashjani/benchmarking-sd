@@ -34,7 +34,7 @@ def aggregate_logs(log_file_path):
     print(f"Aggregated log entries written to {output_json_path}")
 
 # Example usage
-log_file_path = '/home/ubuntu/benchmarking-sd/g4dn.2xlarge/log/mlperf_log.txt'  # Replace with your actual log file path
+log_file_path = '/home/ubuntu/benchmarking-sd/p5.48xlarge/log/mlperf_log.txt'  # Replace with your actual log file path
 
 aggregate_logs(log_file_path)
 
