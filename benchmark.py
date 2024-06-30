@@ -250,4 +250,5 @@ def main():
 
 if __name__ == "__main__":
     os.environ["CUDA_LAUNCH_BLOCKING"] = "1"
+    os.environ["TOKENIZERS_PARALLELISM"] = "true"
     main()
