@@ -13,7 +13,7 @@ import argparse
 from huggingface_hub import login
 
 # Log in to Hugging Face
-#login()
+login()
 
 # Function to use the authentication token
 def use_auth_token():
@@ -60,7 +60,7 @@ class GPUMonitor(threading.Thread):
 
                 mem_util = (mem_used / self.total_memory) * 100
 
-                if gpu_util > self.gpu_gpu_utilization:
+                if gpu_util > self.gpu_utilization:
                     self.gpu_utilization = gpu_util
                 if mem_util > self.gpu_memory_utilization:
                     self.gpu_memory_utilization = mem_util
